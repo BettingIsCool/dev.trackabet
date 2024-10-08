@@ -63,7 +63,7 @@ if 'users_fetched' not in st.session_state:
         st.session_state.session_id = username + '_' + str(datetime.datetime.now())
         tools.get_active_session.clear()
         aux_active_session = tools.get_active_session(st.session_state.user_id)
-        st.experimental_rerun()
+        st.rerun()
 
     st.session_state.users_fetched = True
 
