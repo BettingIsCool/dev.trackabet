@@ -89,15 +89,15 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
     col_sport, col_datefrom, col_dateto = st.columns([4, 2, 2])
 
     with col_sport:
-        selected_sport = st.selectbox(label='Select sport', options=SPORTS.keys(), index=None, placeholder='Add a bet by selecting a sport', help='41 unique sports supported.')
+        selected_sport = st.selectbox(label='Sport', options=SPORTS.keys(), index=None, placeholder='Add a bet by selecting a sport', help='41 unique sports supported.')
 
     if selected_sport is not None:
         with col_datefrom:
-            selected_from_date = st.date_input(label='Select start date', value='today', min_value=datetime.date(year=2021, month=1, day=1), help='Specify what date you want to start searching for fixtures. You can either use the calendar or manually enter the date, i.e. 2024/08/19.')
+            selected_from_date = st.date_input(label='Start date', value='today', min_value=datetime.date(year=2021, month=1, day=1), help='Specify what date you want to start searching for fixtures. You can either use the calendar or manually enter the date, i.e. 2024/08/19.')
 
         if selected_from_date:
             with col_dateto:
-                selected_to_date = st.date_input(label='Select end date', value=selected_from_date + datetime.timedelta(days=0), min_value=selected_from_date + datetime.timedelta(days=0), max_value=selected_from_date + datetime.timedelta(days=3), help='Specify what date you want to end your search. Please note that a maximum range of 3 days is allowed to avoid excess server load.')
+                selected_to_date = st.date_input(label='End date', value=selected_from_date + datetime.timedelta(days=0), min_value=selected_from_date + datetime.timedelta(days=0), max_value=selected_from_date + datetime.timedelta(days=3), help='Specify what date you want to end your search. Please note that a maximum range of 3 days is allowed to avoid excess server load.')
 
             # The event_options dictionary represents the event as a concatenated string (starts - league_name - runner_home - runner_away) with the event_id as key
             # This string is what users see in the dropdown menu
@@ -115,13 +115,13 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                         starts_converted_to_timezone = pytz.timezone('Europe/Vienna').localize(row['starts']).astimezone(pytz.timezone(st.session_state.timezone)).replace(tzinfo=None).strftime('%Y-%m-%d %H:%M')
                         event_options.update({row['event_id']: f"{starts_converted_to_timezone} {row['league_name'].upper()} {row['runner_home']} - {row['runner_away']}"})
                         event_details.update({row['event_id']: {'starts': row['starts'], 'league_id': row['league_id'], 'league_name': row['league_name'], 'runner_home': row['runner_home'], 'runner_away': row['runner_away']}})
-                selected_event_id = st.selectbox(label='Select event', options=event_options.keys(), index=None, format_func=lambda x: event_options.get(x), placeholder='Start typing...', help='Start searching your fixture by typing any league, home team, away team. Only fixtures with available odds are listed.')
+                selected_event_id = st.selectbox(label='Event', options=event_options.keys(), index=None, format_func=lambda x: event_options.get(x), placeholder='Start typing...', help='Start searching your fixture by typing any league, home team, away team. Only fixtures with available odds are listed.')
 
                 col_market, col_period, col_side, col_line, col_odds, col_stake, col_book, col_tag = st.columns([2, 2, 2, 2, 1, 1, 1, 1])
                 if selected_event_id is not None:
                     odds = db.get_odds(event_id=selected_event_id)
                     with col_market:
-                        selected_market = st.selectbox(label='Select market', options=odds.market.unique(), index=None, help='Only markets with available odds are listed.')
+                        selected_market = st.selectbox(label='Market', options=odds.market.unique(), index=None, help='Only markets with available odds are listed.')
 
                     if selected_market is not None:
                         period_options = dict()
@@ -129,7 +129,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                             if row['market'] == selected_market and row['period'] not in period_options.keys():
                                 period_options.update({row['period']: PERIODS[(SPORTS[selected_sport], row['period'])]})
                         with col_period:
-                            selected_period = st.selectbox(label='Select period', options=period_options.keys(), index=None, format_func=lambda x: period_options.get(x), help='Only periods with available closing odds are listed.')
+                            selected_period = st.selectbox(label='Period', options=period_options.keys(), index=None, format_func=lambda x: period_options.get(x), help='Only periods with available closing odds are listed.')
 
                         if selected_period is not None:
                             side_options = dict()
@@ -157,7 +157,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                                         if row['odds2'] is not None:
                                             side_options.update({'odds2': 'Under'})
                             with col_side:
-                                selected_side = st.selectbox(label='Select side', options=side_options.keys(), index=None, format_func=lambda x: side_options.get(x))
+                                selected_side = st.selectbox(label='Dide', options=side_options.keys(), index=None, format_func=lambda x: side_options.get(x))
 
                             if selected_side is not None:
                                 selected_line, line_options = None, dict()
@@ -173,7 +173,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                                             else:
                                                 line_options.update({row['line']: row['line']})
                                     with col_line:
-                                        selected_line = st.selectbox(label='Select line', options=line_options.keys(), index=None, format_func=lambda x: line_options.get(x), help='Only lines with available closing odds are listed.')
+                                        selected_line = st.selectbox(label='Line', options=line_options.keys(), index=None, format_func=lambda x: line_options.get(x), help='Only lines with available closing odds are listed.')
 
                                 if (selected_line is None and selected_market == 'moneyline') or (selected_line is not None and selected_market != 'moneyline'):
                                     if st.session_state.odds_display == 'American':
@@ -190,11 +190,11 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
 
                                         if stake:
                                             with col_book:
-                                                book = st.selectbox("Select bookmaker", options=sorted(BOOKS))
+                                                book = st.selectbox("Book", options=sorted(BOOKS))
 
                                             if book:
                                                 with col_tag:
-                                                    tag = st.text_input("Enter tag", max_chars=25, help='You can add a custom string to classify this bet as something that you may want to research in a future analysis. This could be a particular strategy, model or a tipster, etc.')
+                                                    tag = st.text_input("Tag", max_chars=25, help='You can add a custom string to classify this bet as something that you may want to research in a future analysis. This could be a particular strategy, model or a tipster, etc.')
 
                                                 data = dict()
                                                 data.update({'user': username})
