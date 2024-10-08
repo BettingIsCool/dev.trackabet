@@ -82,13 +82,14 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
 
     # Welcome message in the sidebar
     st.sidebar.title(f"Welcome {username}")
-    st.sidebar.subheader(f"Apply filter")
+    st.sidebar.subheader(f"Apply filters")
     #st.sidebar.write('Session ID: ', st.session_state.session_id)
 
     st.subheader('Add a bet')
 
     # User needs to select sport & date range before fixtures are being fetched from the database
-    col_sport, col_datefrom, col_dateto, col4, col5, col6 = st.columns([4, 4, 5, 4, 2, 2])
+    col_sport, col_datefrom, col_dateto = st.columns([4, 2, 2])
+    col_market, col_period, col_side, col_line, col_odds, col_stake, col_book, col_tag = st.columns([1, 1, 1, 1, 1, 1, 1, 1])
     with col_sport:
         selected_sport = st.selectbox(label='Select sport', options=SPORTS.keys(), index=None, placeholder='Start typing...', help='41 unique sports supported.')
 
@@ -120,14 +121,16 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
 
                 if selected_event_id is not None:
                     odds = db.get_odds(event_id=selected_event_id)
-                    selected_market = st.selectbox(label='Select market', options=odds.market.unique(), index=None, help='Only markets with available odds are listed.')
+                    with col_market:
+                        selected_market = st.selectbox(label='Select market', options=odds.market.unique(), index=None, help='Only markets with available odds are listed.')
 
                     if selected_market is not None:
                         period_options = dict()
                         for index, row in odds.iterrows():
                             if row['market'] == selected_market and row['period'] not in period_options.keys():
                                 period_options.update({row['period']: PERIODS[(SPORTS[selected_sport], row['period'])]})
-                        selected_period = st.selectbox(label='Select period', options=period_options.keys(), index=None, format_func=lambda x: period_options.get(x), help='Only periods with available closing odds are listed.')
+                        with col_period:
+                            selected_period = st.selectbox(label='Select period', options=period_options.keys(), index=None, format_func=lambda x: period_options.get(x), help='Only periods with available closing odds are listed.')
 
                         if selected_period is not None:
                             side_options = dict()
@@ -154,7 +157,8 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                                             side_options.update({'odds1': 'Over'})
                                         if row['odds2'] is not None:
                                             side_options.update({'odds2': 'Under'})
-                            selected_side = st.selectbox(label='Select side', options=side_options.keys(), index=None, format_func=lambda x: side_options.get(x))
+                            with col_side:
+                                selected_side = st.selectbox(label='Select side', options=side_options.keys(), index=None, format_func=lambda x: side_options.get(x))
 
                             if selected_side is not None:
                                 selected_line, line_options = None, dict()
@@ -169,23 +173,29 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                                                 line_options.update({row['line']: -row['line']})
                                             else:
                                                 line_options.update({row['line']: row['line']})
-                                    selected_line = st.selectbox(label='Select line', options=line_options.keys(), index=None, format_func=lambda x: line_options.get(x), help='Only lines with available closing odds are listed.')
+                                    with col_line:
+                                        selected_line = st.selectbox(label='Select line', options=line_options.keys(), index=None, format_func=lambda x: line_options.get(x), help='Only lines with available closing odds are listed.')
 
                                 if (selected_line is None and selected_market == 'moneyline') or (selected_line is not None and selected_market != 'moneyline'):
                                     if st.session_state.odds_display == 'American':
-                                        american_odds = st.number_input("Enter odds", min_value=-10000, value=100, step=1)
+                                        with col_odds:
+                                            american_odds = st.number_input("Enter odds", min_value=-10000, value=100, step=1)
                                         odds = tools.get_decimal_odds(american_odds=american_odds)
                                     else:
-                                        odds = st.number_input("Enter odds", min_value=1.001, value=2.000, step=0.01, format="%0.3f")
+                                        with col_odds:
+                                            odds = st.number_input("Enter odds", min_value=1.001, value=2.000, step=0.01, format="%0.3f")
 
                                     if odds:
-                                        stake = st.number_input("Enter stake", min_value=0.01, value=1.00, step=1.00, format="%0.2f")
+                                        with col_stake:
+                                            stake = st.number_input("Enter stake", min_value=0.01, value=1.00, step=1.00, format="%0.2f")
 
                                         if stake:
-                                            book = st.selectbox("Select bookmaker", options=sorted(BOOKS))
+                                            with col_book:
+                                                book = st.selectbox("Select bookmaker", options=sorted(BOOKS))
 
                                             if book:
-                                                tag = st.text_input("Enter tag", max_chars=25, help='You can add a custom string to classify this bet as something that you may want to research in a future analysis. This could be a particular strategy, model or a tipster, etc.')
+                                                with col_tag:
+                                                    tag = st.text_input("Enter tag", max_chars=25, help='You can add a custom string to classify this bet as something that you may want to research in a future analysis. This could be a particular strategy, model or a tipster, etc.')
 
                                                 data = dict()
                                                 data.update({'user': username})
