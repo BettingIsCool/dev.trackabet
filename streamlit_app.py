@@ -81,20 +81,24 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
     bets_to_be_deleted, df = set(), set()
 
     # Welcome message in the sidebar
-    st.sidebar.markdown("Track-A-Bet by BettingIsCool v1.5.30")
     st.sidebar.title(f"Welcome {username}")
-    st.sidebar.write('Session ID: ', st.session_state.session_id)
+    st.sidebar.subheader(f"Apply filter")
+    #st.sidebar.write('Session ID: ', st.session_state.session_id)
 
     st.subheader('Add a bet')
 
     # User needs to select sport & date range before fixtures are being fetched from the database
-    selected_sport = st.selectbox(label='Select sport', options=SPORTS.keys(), index=None, placeholder='Start typing...', help='41 unique sports supported.')
+    col_sport, col_datefrom, col_dateto, col4, col5, col6 = st.columns([4, 4, 5, 4, 2, 2])
+    with col_sport:
+        selected_sport = st.selectbox(label='Select sport', options=SPORTS.keys(), index=None, placeholder='Start typing...', help='41 unique sports supported.')
 
     if selected_sport is not None:
-        selected_from_date = st.date_input(label='Select start date', value='today', min_value=datetime.date(year=2021, month=1, day=1), help='Specify what date you want to start searching for fixtures. You can either use the calendar or manually enter the date, i.e. 2024/08/19.')
+        with col_datefrom:
+            selected_from_date = st.date_input(label='Select start date', value='today', min_value=datetime.date(year=2021, month=1, day=1), help='Specify what date you want to start searching for fixtures. You can either use the calendar or manually enter the date, i.e. 2024/08/19.')
 
         if selected_from_date:
-            selected_to_date = st.date_input(label='Select end date', value=selected_from_date + datetime.timedelta(days=0), min_value=selected_from_date + datetime.timedelta(days=0), max_value=selected_from_date + datetime.timedelta(days=3), help='Specify what date you want to end your search. Please note that a maximum range of 3 days is allowed to avoid excess server load.')
+            with col_dateto:
+                selected_to_date = st.date_input(label='Select end date', value=selected_from_date + datetime.timedelta(days=0), min_value=selected_from_date + datetime.timedelta(days=0), max_value=selected_from_date + datetime.timedelta(days=3), help='Specify what date you want to end your search. Please note that a maximum range of 3 days is allowed to avoid excess server load.')
 
             # The event_options dictionary represents the event as a concatenated string (starts - league_name - runner_home - runner_away) with the event_id as key
             # This string is what users see in the dropdown menu
@@ -229,34 +233,28 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                                                     time.sleep(1.5)
                                                     placeholder1.empty()
 
-    col1, col2, col3, col4, col5, col6 = st.columns([4, 4, 5, 4, 2, 2])
-
     # Apply filter to recorded bets
     user_unique_sports = db.get_user_unique_sports(username=username)
-    with col1:
-        selected_sports = st.sidebar.multiselect(label='Sports', options=sorted(user_unique_sports), default=user_unique_sports)
+    selected_sports = st.sidebar.multiselect(label='Sports', options=sorted(user_unique_sports), default=user_unique_sports)
     selected_sports = [f"'{s}'" for s in selected_sports]
     selected_sports = f"({','.join(selected_sports)})"
 
     weighted_average_odds = 1.00
     if selected_sports != '()':
         user_unique_bookmakers = db.get_user_unique_bookmakers(username=username, sports=selected_sports)
-        with col2:
-            selected_bookmakers = st.sidebar.multiselect(label='Bookmakers', options=sorted(user_unique_bookmakers), default=user_unique_bookmakers)
+        selected_bookmakers = st.sidebar.multiselect(label='Bookmakers', options=sorted(user_unique_bookmakers), default=user_unique_bookmakers)
         selected_bookmakers = [f"'{s}'" for s in selected_bookmakers]
         selected_bookmakers = f"({','.join(selected_bookmakers)})"
 
         if selected_bookmakers != '()':
             user_unique_tags = db.get_user_unique_tags(username=username, sports=selected_sports, bookmakers=selected_bookmakers)
-            with col3:
-                selected_tags = st.sidebar.multiselect(label='Tags', options=sorted(user_unique_tags), default=user_unique_tags)
+            selected_tags = st.sidebar.multiselect(label='Tags', options=sorted(user_unique_tags), default=user_unique_tags)
             selected_tags = [f"'{s}'" for s in selected_tags]
             selected_tags = f"({','.join(selected_tags)})"
 
             if selected_tags != '()':
                 user_unique_bet_status = db.get_user_unique_bet_status(username=username, sports=selected_sports, bookmakers=selected_bookmakers, tags=selected_tags)
-                with col4:
-                    selected_bet_status = st.sidebar.multiselect(label='Status', options=sorted(user_unique_bet_status), default=user_unique_bet_status, help='Select the bet status. W = Won, HW = Half Won, L = Lost, HL = Half Lost, P = Push, V = Void, na = ungraded')
+                selected_bet_status = st.sidebar.multiselect(label='Status', options=sorted(user_unique_bet_status), default=user_unique_bet_status, help='Select the bet status. W = Won, HW = Half Won, L = Lost, HL = Half Lost, P = Push, V = Void, na = ungraded')
                 selected_bet_status = [f"'{s}'" for s in selected_bet_status]
                 selected_bet_status = f"({','.join(selected_bet_status)})"
 
@@ -264,10 +262,8 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                     user_unique_starts = db.get_user_unique_starts(username=username, sports=selected_sports, bookmakers=selected_bookmakers, tags=selected_tags, bet_status=selected_bet_status)
 
                     if user_unique_starts is not None:
-                        with col5:
-                            selected_date_from = st.sidebar.date_input(label='Start', value=min(user_unique_starts), min_value=min(user_unique_starts), max_value=max(user_unique_starts), help='Specify the start date for analysis. You can either use the calendar or manually enter the date, i.e. 2024/08/19.')
-                        with col6:
-                            selected_date_to = st.sidebar.date_input(label='End', value=max(user_unique_starts), min_value=min(user_unique_starts), max_value=max(user_unique_starts), help='Specify the end date for analysis. You can either use the calendar or manually enter the date, i.e. 2024/08/19.')
+                        selected_date_from = st.sidebar.date_input(label='Start', value=min(user_unique_starts), min_value=min(user_unique_starts), max_value=max(user_unique_starts), help='Specify the start date for analysis. You can either use the calendar or manually enter the date, i.e. 2024/08/19.')
+                        selected_date_to = st.sidebar.date_input(label='End', value=max(user_unique_starts), min_value=min(user_unique_starts), max_value=max(user_unique_starts), help='Specify the end date for analysis. You can either use the calendar or manually enter the date, i.e. 2024/08/19.')
 
                         bets = db.get_bets(username=username, sports=selected_sports, bookmakers=selected_bookmakers, tags=selected_tags, bet_status=selected_bet_status, date_from=selected_date_from, date_to=selected_date_to)
                         bets_df = pd.DataFrame(data=bets)
@@ -372,8 +368,6 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
             chart_data = pd.DataFrame({"bet_no": cum_bets, "Actual P/L": cum_profit, "Expected P/L": cum_clv}, columns=["bet_no", "Actual P/L", "Expected P/L"])
             st.line_chart(chart_data, x="bet_no", y=["Actual P/L", "Expected P/L"], x_label='Bet no', y_label='Actual vs expected profit', color=["#FF0000", "#FFA500"], height=800)
 
-    st.sidebar.image(image="media/logo_sbic.png", use_column_width='auto')
-
     # Create a radio button for Decimal/American odds format
     odds_display_options = ['Decimal', 'American']
     st.session_state.odds_display = st.sidebar.radio(label="Select odds format", options=odds_display_options, index=odds_display_options.index(st.session_state.odds_display), horizontal=True, on_change=db.set_user_odds_display, args=(username, placeholder1), key='odds_display_key')
@@ -381,6 +375,10 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
     # Create selectbox for timezone
     timezone_options = pytz.common_timezones
     st.session_state.timezone = st.sidebar.selectbox(label="Select timezone", options=timezone_options, index=timezone_options.index(st.session_state.timezone), on_change=db.set_user_timezone, args=(username, placeholder1), key='timezone_key')
+
+    # Display logo and version
+    st.sidebar.image(image="media/logo_sbic.png", use_column_width='auto')
+    st.sidebar.markdown("Track-A-Bet by BettingIsCool v1.5.30")
 
 else:
     st.info('Your session has expired')
