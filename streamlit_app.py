@@ -82,6 +82,7 @@ if st.session_state.session_id == tools.get_active_session():
     # Welcome message in the sidebar
     st.sidebar.markdown("Track-A-Bet by BettingIsCool v1.5.28")
     st.sidebar.title(f"Welcome {username}")
+    st.sidebar.write('Session ID: ', st.session_state.session_id)
 
     st.sidebar.subheader('Add a bet')
 
