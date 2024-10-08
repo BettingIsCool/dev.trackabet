@@ -117,7 +117,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                         event_details.update({row['event_id']: {'starts': row['starts'], 'league_id': row['league_id'], 'league_name': row['league_name'], 'runner_home': row['runner_home'], 'runner_away': row['runner_away']}})
                 selected_event_id = st.selectbox(label='Event', options=event_options.keys(), index=None, format_func=lambda x: event_options.get(x), placeholder='Start typing...', help='Start searching your fixture by typing any league, home team, away team. Only fixtures with available odds are listed.')
 
-                col_market, col_period, col_side, col_line, col_odds, col_stake, col_book, col_tag = st.columns([2, 2, 2, 2, 1, 1, 1, 1])
+                col_market, col_period, col_side, col_line, col_odds, col_stake, col_book, col_tag = st.columns([2, 1, 3, 1, 1, 1, 1, 1])
                 if selected_event_id is not None:
                     odds = db.get_odds(event_id=selected_event_id)
                     with col_market:
@@ -157,7 +157,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                                         if row['odds2'] is not None:
                                             side_options.update({'odds2': 'Under'})
                             with col_side:
-                                selected_side = st.selectbox(label='Dide', options=side_options.keys(), index=None, format_func=lambda x: side_options.get(x))
+                                selected_side = st.selectbox(label='Side', options=side_options.keys(), index=None, format_func=lambda x: side_options.get(x))
 
                             if selected_side is not None:
                                 selected_line, line_options = None, dict()
