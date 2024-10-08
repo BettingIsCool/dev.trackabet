@@ -89,7 +89,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
 
     # User needs to select sport & date range before fixtures are being fetched from the database
     col_sport, col_datefrom, col_dateto = st.columns([4, 2, 2])
-    col_market, col_period, col_side, col_line, col_odds, col_stake, col_book, col_tag = st.columns([1, 1, 1, 1, 1, 1, 1, 1])
+
     with col_sport:
         selected_sport = st.selectbox(label='Select sport', options=SPORTS.keys(), index=None, placeholder='Start typing...', help='41 unique sports supported.')
 
@@ -119,6 +119,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                         event_details.update({row['event_id']: {'starts': row['starts'], 'league_id': row['league_id'], 'league_name': row['league_name'], 'runner_home': row['runner_home'], 'runner_away': row['runner_away']}})
                 selected_event_id = st.selectbox(label='Select event', options=event_options.keys(), index=None, format_func=lambda x: event_options.get(x), placeholder='Start typing...', help='Start searching your fixture by typing any league, home team, away team. Only fixtures with available odds are listed.')
 
+                col_market, col_period, col_side, col_line, col_odds, col_stake, col_book, col_tag = st.columns([1, 1, 1, 1, 1, 1, 1, 1])
                 if selected_event_id is not None:
                     odds = db.get_odds(event_id=selected_event_id)
                     with col_market:
