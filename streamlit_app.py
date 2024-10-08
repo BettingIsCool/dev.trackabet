@@ -117,7 +117,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                         event_details.update({row['event_id']: {'starts': row['starts'], 'league_id': row['league_id'], 'league_name': row['league_name'], 'runner_home': row['runner_home'], 'runner_away': row['runner_away']}})
                 selected_event_id = st.selectbox(label='Event', options=event_options.keys(), index=None, format_func=lambda x: event_options.get(x), placeholder='Start typing...', help='Start searching your fixture by typing any league, home team, away team. Only fixtures with available odds are listed.')
 
-                col_market, col_period, col_side, col_line, col_odds, col_stake, col_book, col_tag = st.columns([2, 1, 3, 1, 1, 1, 1, 1])
+                col_market, col_period, col_side, col_line, col_odds, col_stake, col_book, col_tag = st.columns([1, 1, 2, 1, 1, 1, 1, 1])
                 if selected_event_id is not None:
                     odds = db.get_odds(event_id=selected_event_id)
                     with col_market:
@@ -178,15 +178,15 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                                 if (selected_line is None and selected_market == 'moneyline') or (selected_line is not None and selected_market != 'moneyline'):
                                     if st.session_state.odds_display == 'American':
                                         with col_odds:
-                                            american_odds = st.number_input("Enter odds", min_value=-10000, value=100, step=1)
+                                            american_odds = st.number_input("Odds", min_value=-10000, value=100, step=1)
                                         odds = tools.get_decimal_odds(american_odds=american_odds)
                                     else:
                                         with col_odds:
-                                            odds = st.number_input("Enter odds", min_value=1.001, value=2.000, step=0.01, format="%0.3f")
+                                            odds = st.number_input("Odds", min_value=1.001, value=2.000, step=0.01, format="%0.3f")
 
                                     if odds:
                                         with col_stake:
-                                            stake = st.number_input("Enter stake", min_value=0.01, value=1.00, step=1.00, format="%0.2f")
+                                            stake = st.number_input("Stake", min_value=0.01, value=1.00, step=1.00, format="%0.2f")
 
                                         if stake:
                                             with col_book:
