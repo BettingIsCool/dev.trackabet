@@ -92,7 +92,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
     col_sport, col_datefrom, col_dateto = st.columns([4, 2, 2])
 
     with col_sport:
-        selected_sport = st.selectbox(label='Sport', options=SPORTS.keys(), index=list(SPORTS.keys()).index('Soccer'), placeholder='Add a bet by selecting a sport', help='41 unique sports supported.')
+        selected_sport = st.selectbox(label='Sport', options=SPORTS.keys(), index=list(SPORTS.keys()).index('Basketball'), placeholder='Add a bet by selecting a sport', help='41 unique sports supported.')
 
     if selected_sport is not None:
         with col_datefrom:
