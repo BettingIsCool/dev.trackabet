@@ -83,6 +83,8 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
         st.session_state.timezone = db.get_user_timezone(username=username)[0]
     if 'default_sport' not in st.session_state:
         st.session_state.default_sport = db.get_user_default_sport(username=username)[0]
+    if 'default_book' not in st.session_state:
+        st.session_state.default_book = db.get_user_default_book(username=username)[0]
 
     # Initialize bets_to_be_deleted & dataframes
     bets_to_be_deleted, df = set(), set()
@@ -128,7 +130,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                 if selected_event_id is not None:
                     odds = db.get_odds(event_id=selected_event_id)
                     with col_market:
-                        selected_market = st.selectbox(label='Market', options=odds.market.unique(), index=list(odds.market.unique()).index('home_totals'), help='Only markets with available odds are listed.')
+                        selected_market = st.selectbox(label='Market', options=odds.market.unique(), index=0, help='Only markets with available odds are listed.')
 
                     if selected_market is not None:
                         period_options = dict()
@@ -136,7 +138,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                             if row['market'] == selected_market and row['period'] not in period_options.keys():
                                 period_options.update({row['period']: PERIODS[(SPORTS[selected_sport], row['period'])]})
                         with col_period:
-                            selected_period = st.selectbox(label='Period', options=period_options.keys(), index=None, format_func=lambda x: period_options.get(x), help='Only periods with available closing odds are listed.')
+                            selected_period = st.selectbox(label='Period', options=period_options.keys(), index=0, format_func=lambda x: period_options.get(x), help='Only periods with available closing odds are listed.')
 
                         if selected_period is not None:
                             side_options = dict()
@@ -164,7 +166,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                                         if row['odds2'] is not None:
                                             side_options.update({'odds2': 'Under'})
                             with col_side:
-                                selected_side = st.selectbox(label='Side', options=side_options.keys(), index=None, format_func=lambda x: side_options.get(x))
+                                selected_side = st.selectbox(label='Side', options=side_options.keys(), index=0, format_func=lambda x: side_options.get(x))
 
                             if selected_side is not None:
                                 selected_line, line_options = None, dict()
@@ -180,7 +182,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                                             else:
                                                 line_options.update({row['line']: row['line']})
                                     with col_line:
-                                        selected_line = st.selectbox(label='Line', options=line_options.keys(), index=None, format_func=lambda x: line_options.get(x), help='Only lines with available closing odds are listed.')
+                                        selected_line = st.selectbox(label='Line', options=line_options.keys(), index=0, format_func=lambda x: line_options.get(x), help='Only lines with available closing odds are listed.')
 
                                 if (selected_line is None and selected_market == 'moneyline') or (selected_line is not None and selected_market != 'moneyline'):
                                     if st.session_state.odds_display == 'American':
@@ -390,8 +392,10 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
     st.session_state.timezone = st.sidebar.selectbox(label="Select timezone", options=timezone_options, index=timezone_options.index(st.session_state.timezone), on_change=db.set_user_timezone, args=(username, placeholder1), key='timezone_key')
 
     # Create selectbox for default sport
-    timezone_options = pytz.common_timezones
     st.session_state.default_sport = st.sidebar.selectbox(label="Select default sport", options=list(SPORTS.keys()), index=list(SPORTS.keys()).index(st.session_state.default_sport), on_change=db.set_user_default_sport, args=(username, placeholder1), key='default_sport_key')
+
+    # Create selectbox for default sport
+    st.session_state.default_book = st.sidebar.selectbox(label="Select default bookmaker", options=list(BOOKS), index=list(BOOKS).index(st.session_state.default_book), on_change=db.set_user_default_book, args=(username, placeholder1), key='default_book_key')
 
     # Display logo and version
     st.sidebar.image(image="media/logo_sbic.png", use_column_width='auto')
