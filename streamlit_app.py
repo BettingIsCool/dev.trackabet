@@ -79,6 +79,8 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
         st.session_state.odds_display = db.get_user_odds_display(username=username)[0]
     if 'timezone' not in st.session_state:
         st.session_state.timezone = db.get_user_timezone(username=username)[0]
+    if 'default_sport' not in st.session_state:
+        st.session_state.default_sport = db.get_user_default_sport(username=username)[0]
 
     # Initialize bets_to_be_deleted & dataframes
     bets_to_be_deleted, df = set(), set()
@@ -92,7 +94,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
     col_sport, col_datefrom, col_dateto = st.columns([4, 2, 2])
 
     with col_sport:
-        selected_sport = st.selectbox(label='Sport', options=SPORTS.keys(), index=list(SPORTS.keys()).index('Basketball'), placeholder='Add a bet by selecting a sport', help='41 unique sports supported.')
+        selected_sport = st.selectbox(label='Sport', options=SPORTS.keys(), index=list(SPORTS.keys()).index(st.session_state.default_sport), placeholder='Add a bet by selecting a sport', help='41 unique sports supported.')
 
     if selected_sport is not None:
         with col_datefrom:
