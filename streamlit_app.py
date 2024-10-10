@@ -59,6 +59,7 @@ if 'users_fetched' not in st.session_state:
     tools.clear_cache()
     if username not in set(db.get_users()):
         db.append_user(data={'username': username})
+        st.session_state.session_id = username + '_' + str(datetime.datetime.now())
 
     # Create session token
     else:
