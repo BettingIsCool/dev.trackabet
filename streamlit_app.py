@@ -128,7 +128,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                 if selected_event_id is not None:
                     odds = db.get_odds(event_id=selected_event_id)
                     with col_market:
-                        selected_market = st.selectbox(label='Market', options=odds.market.unique(), index=None, help='Only markets with available odds are listed.')
+                        selected_market = st.selectbox(label='Market', options=odds.market.unique(), index=list(odds.market.unique()).index('moneyline'), help='Only markets with available odds are listed.')
 
                     if selected_market is not None:
                         period_options = dict()
