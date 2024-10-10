@@ -399,7 +399,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
 
     # Display logo and version
     st.sidebar.image(image="media/logo_sbic.png", use_column_width='auto')
-    st.sidebar.markdown("Track-A-Bet by BettingIsCool v1.6.31")
+    st.sidebar.markdown("Track-A-Bet by BettingIsCool v1.7.33")
 
 else:
     st.info('Your session has expired')
