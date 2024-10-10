@@ -234,10 +234,10 @@ def append_user(data: dict):
     :param data: Dictionary containing user data with the key 'username'.
     :return: None
     """
-    query = f"INSERT INTO {TABLE_USERS} (username, odds_display, timezone) VALUES(:username, :odds_display, :timezone)"
+    query = f"INSERT INTO {TABLE_USERS} (username, odds_display, timezone, default_sport) VALUES(:username, :odds_display, :timezone, :default_sport)"
 
     with conn.session as session:
-        session.execute(text(query), params=dict(username=data['username'], odds_display='Decimal', timezone='Europe/London'))
+        session.execute(text(query), params=dict(username=data['username'], odds_display='Decimal', timezone='Europe/London', default_sport='Soccer'))
         session.commit()
 
 
