@@ -15,7 +15,6 @@ from config import SPORTS, PERIODS, BOOKS, TEXT_LANDING_PAGE
 
 # TODO closing odds extrapolation for heavy drifters/steamers
 # TODO default value for dropdown menus (stored in user database)
-# TODO color status / pl green-red
 # TODO streamlit-extras lib (add country flags)
 
 # TODO tag update not working (only after 2nd try)
@@ -93,7 +92,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
     col_sport, col_datefrom, col_dateto = st.columns([4, 2, 2])
 
     with col_sport:
-        selected_sport = st.selectbox(label='Sport', options=SPORTS.keys(), index=None, placeholder='Add a bet by selecting a sport', help='41 unique sports supported.')
+        selected_sport = st.selectbox(label='Sport', options=SPORTS.keys(), index=list(SPORTS.keys()).index('Soccer'), placeholder='Add a bet by selecting a sport', help='41 unique sports supported.')
 
     if selected_sport is not None:
         with col_datefrom:
