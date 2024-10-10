@@ -14,7 +14,6 @@ import db_pinnacle_remote as db
 from config import SPORTS, PERIODS, BOOKS, TEXT_LANDING_PAGE
 
 # TODO closing odds extrapolation for heavy drifters/steamers
-# TODO default value for dropdown menus (stored in user database)
 # TODO streamlit-extras lib (add country flags)
 
 # TODO tag update not working (only after 2nd try)
@@ -404,7 +403,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
 
     # Display logo and version
     st.sidebar.image(image="media/logo_sbic.png", use_column_width='auto')
-    st.sidebar.markdown("Track-A-Bet by BettingIsCool v1.7.33")
+    st.sidebar.markdown("Track-A-Bet by BettingIsCool v1.8.44")
 
 else:
     st.info('Your session has expired')
