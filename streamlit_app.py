@@ -385,9 +385,13 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
     timezone_options = pytz.common_timezones
     st.session_state.timezone = st.sidebar.selectbox(label="Select timezone", options=timezone_options, index=timezone_options.index(st.session_state.timezone), on_change=db.set_user_timezone, args=(username, placeholder1), key='timezone_key')
 
+    # Create selectbox for default sport
+    timezone_options = pytz.common_timezones
+    st.session_state.default_sport = st.sidebar.selectbox(label="Select default sport", options=list(SPORTS.keys()), index=list(SPORTS.keys()).index(st.session_state.default_sport), on_change=db.set_user_default_sport, args=(username, placeholder1), key='default_sport_key')
+
     # Display logo and version
     st.sidebar.image(image="media/logo_sbic.png", use_column_width='auto')
-    st.sidebar.markdown("Track-A-Bet by BettingIsCool v1.5.30")
+    st.sidebar.markdown("Track-A-Bet by BettingIsCool v1.6.31")
 
 else:
     st.info('Your session has expired')
