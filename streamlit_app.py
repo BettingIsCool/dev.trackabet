@@ -199,7 +199,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
 
                                         if stake:
                                             with col_book:
-                                                book = st.selectbox("Book", options=sorted(BOOKS))
+                                                book = st.selectbox("Book", options=sorted(BOOKS), index=list(BOOKS).index(st.session_state.default_book))
 
                                             if book:
                                                 with col_tag:
