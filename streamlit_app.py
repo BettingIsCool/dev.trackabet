@@ -1,19 +1,3 @@
-# TODO set up test environment
-# TODO tag update not working (only after 2nd try)
-# TODO add tennis sets/games explanation
-# TODO color status / pl green-red
-# TODO new layout / styled button -> https://www.youtube.com/watch?v=jbJpAdGlKVY
-# TODO get rid of rerun (on_change function)
-# TODO Re-arrange 'add a abet', collapse sidebar
-# TODO Improvement idea: filters for leagues and markets.
-# TODO Improvement idea: Have a auto complete on tags too so you can start entering the word like you do with bookmarkers. And maybe add the most recents tags under the form box so you can choose it.
-# TODO session expired after a few minutes
-# TODO refactoring / gold-plating
-# TODO private github repo (streamlit teams)
-# TODO streamlit-extras lib
-# TODO bet size filter / clv filter
-# TODO video covering sorting, exporting, tennis markets (games), future bets,...
-
 import streamlit as st
 
 # set_page_config() can only be called once per app page, and must be called as the first Streamlit command in your script.
@@ -29,6 +13,26 @@ import db_pinnacle_remote as db
 
 from config import SPORTS, PERIODS, BOOKS, TEXT_LANDING_PAGE
 
+# TODO closing odds extrapolation for heavy drifters/steamers
+# TODO default value for dropdown menus (stored in user database)
+# TODO color status / pl green-red
+# TODO streamlit-extras lib (add country flags)
+
+# TODO tag update not working (only after 2nd try)
+# TODO add tennis sets/games explanation
+# TODO styled button -> https://www.youtube.com/watch?v=jbJpAdGlKVY
+# TODO get rid of rerun (on_change function)
+# TODO Improvement idea: filters for leagues and markets.
+# TODO Improvement idea: Have a auto complete on tags too so you can start entering the word like you do with bookmarkers. And maybe add the most recents tags under the form box so you can choose it.
+# TODO refactoring / gold-plating
+# TODO private github repo (streamlit teams)
+# TODO bet size filter / clv filter
+# TODO video covering sorting, exporting, tennis markets (games), future bets,...
+
+# TODO recent changes
+# > new layout
+# > enables one session per user
+
 placeholder1 = st.empty()
 
 if 'display_landing_page_text' not in st.session_state:
@@ -37,7 +41,7 @@ if 'display_landing_page_text' not in st.session_state:
     placeholder1.markdown(TEXT_LANDING_PAGE)
     st.session_state.display_landing_page_text = True
 
-# Add google authentication (only users with a valid stripe subscription can log in
+# Add google authentication (only users with a valid stripe subscription can log in)
 # Username must match the registered email-address at stripe
 # IMPORTANT: st_paywall is a forked library. This fork supports additional verification, i.e. if the user has a valid subscription for the product
 # The original st_paywall just looks into the stripe account for ANY valid subscription for that particular user, but doesn't care if this subscription is actually valid for a specific app.
@@ -83,7 +87,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
     # Welcome message in the sidebar
     st.sidebar.title(f"Welcome {username}")
     st.sidebar.subheader(f"Apply filters")
-    #st.sidebar.write('Session ID: ', st.session_state.session_id)
+    # st.sidebar.write('Session ID: ', st.session_state.session_id)
 
     # User needs to select sport & date range before fixtures are being fetched from the database
     col_sport, col_datefrom, col_dateto = st.columns([4, 2, 2])
@@ -308,9 +312,6 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
                         else:
                             styled_df = bets_df.style.applymap(tools.color_cells, subset=['ST', 'P/L', 'EXP_WIN', 'CLV']).format({'LINE': '{:g}'.format, 'ODDS': '{:,.3f}'.format, 'STAKE': '{:,.2f}'.format, 'P/L': '{:,.2f}'.format, 'CLS': '{:,.3f}'.format, 'CLS_TRUE': '{:,.3f}'.format, 'CLS_LIMIT': '{:,.0f}'.format, 'EXP_WIN': '{:,.2f}'.format, 'CLV': '{:,.2%}'.format, 'SH': '{0:g}'.format, 'SA': '{0:g}'.format})
                             pd.set_option("styler.render.max_elements", 33333333)
-
-                        # Option without editable dataframe
-                        #df = st.data_editor(styled_df, column_config={"DEL": st.column_config.CheckboxColumn("DEL", help="Select if you want to delete this bet.", default=False), "ST": st.column_config.TextColumn("ST", help="Bet Status. W = Won, HW = Half Won, L = Lost, HL = Half Lost, P = Push, V = Void, na = ungraded"), "TAG": st.column_config.Column("TAG", help="Tag your bets to classify them for future research, i.e. apply a tag filter. This could be a particular strategy, model or a tipster, etc."), "SH": st.column_config.Column("SH", help="Score Home"), "SA": st.column_config.Column("SA", help="Score Away"), "STARTS": st.column_config.Column("STARTS", help="Event starting time"), "SPORT": st.column_config.Column("SPORT", help="Sport"), "LEAGUE": st.column_config.Column("LEAGUE", help="League"), "RUNNER_HOME": st.column_config.Column("RUNNER_HOME", help="Home Team/Player 1"), "RUNNER_AWAY": st.column_config.Column("RUNNER_AWAY", help="Away Team/Player 2"), "MARKET": st.column_config.Column("MARKET", help="Market. This can be one of the following: MONEYLINE, SPREAD, TOTALS, HOME_TOTALS, AWAY_TOTALS"), "PERIOD": st.column_config.Column("PERIOD", help="Period. This refers to the game section of the bet, i.e. fulltime, halftime, 1st quarter, etc."), "SIDE": st.column_config.Column("SIDE", help="Selection"), "LINE": st.column_config.Column("LINE", help="Line refers to the handicap for spread & totals markets."), "ODDS": st.column_config.Column("ODDS", help="Obtained price"), "STAKE": st.column_config.Column("STAKE", help="Risk amount"), "BOOK": st.column_config.Column("BOOK", help="Bookmaker"), "P/L": st.column_config.Column("P/L", help="Actual profit"), "CLS": st.column_config.Column("CLS", help="Closing price"), "CLS_TRUE": st.column_config.Column("CLS_TRUE", help="Closing price with bookmaker margin removed (= no-vig closing odds)"), "CLS_LIMIT": st.column_config.Column("CLS_LIMIT", help="Maximum bet size at closing"), "EXP_WIN": st.column_config.Column("EXP_WIN", help="Expected Win. This is the expected value of your bet. This figure compares obtained odds with no-vig closing odds and takes into account the stake. Quality bets will typically have an exp_win > 0."), "CLV": st.column_config.Column("CLV", help="Closing line value. This is the expected roi of your bet. This figure compares obtained odds with no-vig closing odds. Quality bets will typically have a clv > 0."), "BET_ADDED": st.column_config.Column("BET_ADDED", help="Timestamp of the recorded bet.")}, disabled=['STARTS', 'SPORT', 'LEAGUE', 'RUNNER_HOME', 'RUNNER_AWAY', 'MARKET', 'PERIOD', 'SIDE', 'LINE', 'ODDS', 'CLS', 'CLS_TRUE', 'CLS_LIMIT', 'EXP_WIN', 'CLV', 'BET_ADDED', 'ID', 'TAG', 'STAKE', 'BOOK', 'ST', 'SH', 'SA', 'P/L'], key='initial_df_key', hide_index=True)
 
                         # START - Option with editable dataframe
                         if 'initial_df' not in st.session_state:

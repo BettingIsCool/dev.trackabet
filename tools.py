@@ -32,11 +32,15 @@ def color_cells(val: (str, int, float)):
     color = 'white'
     if val is not None:
 
+        st.write(val)
+
         if isinstance(val, str):
             if val in ('HW', 'W'):
                 color = 'green'
             elif val in ('HL', 'L'):
                 color = 'red'
+            elif val == 'na':
+                color = 'gray'
 
         else:
             if val > 0:
