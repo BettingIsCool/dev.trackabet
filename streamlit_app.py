@@ -85,6 +85,8 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
         st.session_state.default_sport = db.get_user_default_sport(username=username)[0]
     if 'default_book' not in st.session_state:
         st.session_state.default_book = db.get_user_default_book(username=username)[0]
+    if 'default_tag' not in st.session_state:
+        st.session_state.default_tag = db.get_user_default_tag(username=username)[0]
 
     # Initialize bets_to_be_deleted & dataframes
     bets_to_be_deleted, df = set(), set()
@@ -203,7 +205,7 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
 
                                             if book:
                                                 with col_tag:
-                                                    tag = st.text_input("Tag", max_chars=25, help='You can add a custom string to classify this bet as something that you may want to research in a future analysis. This could be a particular strategy, model or a tipster, etc.')
+                                                    tag = st.text_input("Tag", value=st.session_state.default_tag, max_chars=25, help='You can add a custom string to classify this bet as something that you may want to research in a future analysis. This could be a particular strategy, model or a tipster, etc.')
 
                                                 data = dict()
                                                 data.update({'user': username})
@@ -392,10 +394,13 @@ if st.session_state.session_id == tools.get_active_session(st.session_state.user
     st.session_state.timezone = st.sidebar.selectbox(label="Select timezone", options=timezone_options, index=timezone_options.index(st.session_state.timezone), on_change=db.set_user_timezone, args=(username, placeholder1), key='timezone_key')
 
     # Create selectbox for default sport
-    st.session_state.default_sport = st.sidebar.selectbox(label="Select default sport", options=list(SPORTS.keys()), index=list(SPORTS.keys()).index(st.session_state.default_sport), on_change=db.set_user_default_sport, args=(username, placeholder1), key='default_sport_key')
+    st.session_state.default_sport = st.sidebar.selectbox(label="Select default sport", options=list(SPORTS.keys()), index=list(SPORTS.keys()).index(st.session_state.default_sport), on_change=db.set_user_default_sport, args=(username, placeholder1), key='default_sport_key', help="This will be the default sport when adding a bet.")
 
-    # Create selectbox for default sport
-    st.session_state.default_book = st.sidebar.selectbox(label="Select default bookmaker", options=list(BOOKS), index=list(BOOKS).index(st.session_state.default_book), on_change=db.set_user_default_book, args=(username, placeholder1), key='default_book_key')
+    # Create selectbox for default book
+    st.session_state.default_book = st.sidebar.selectbox(label="Select default bookmaker", options=list(BOOKS), index=list(BOOKS).index(st.session_state.default_book), on_change=db.set_user_default_book, args=(username, placeholder1), key='default_book_key', help="This will be the default bookmaker when adding a bet.")
+
+    # Create text input for default tag
+    st.session_state.default_tag = st.sidebartext_input("Input default tag", max_chars=25, help="This will be the default tag when adding a bet.")
 
     # Display logo and version
     st.sidebar.image(image="media/logo_sbic.png", use_column_width='auto')
